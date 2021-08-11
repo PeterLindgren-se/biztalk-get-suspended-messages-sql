@@ -6,7 +6,7 @@
 
 Push-Location
 # 0x0100000 = 1 Mbyte
-$RSmessages = Invoke-Sqlcmd -ServerInstance "btscludbmsg-qa\bts-msg01,50004" -Database "BizTalkMsgBoxDb" -InputFile $QueryFileName -MaxBinaryLength 0x0100000
+$RSmessages = Invoke-Sqlcmd -ServerInstance "servername\instancename,portnumber" -Database "BizTalkMsgBoxDb" -InputFile $QueryFileName -MaxBinaryLength 0x0100000
 
 $RSmessages | % {
   if ($_.nvcMessageType -ne [System.DBNull]::Value)
@@ -59,7 +59,7 @@ $RSmessages | % {
   # second fragment?
   # Then write the base fragment (fragment 0) from imgPart
   # (The sql query performs a left join so that we always get the base fragment in [imgPart]
-  # for all rows för fragmented message parts)
+  # for all rows for fragmented message parts)
   #
   if (($_.nNumFragments -eq 1) -or (($_.nNumFragments -gt 1) -and ($_.nFragmentNumber -eq 1)))
   {
