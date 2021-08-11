@@ -63,7 +63,6 @@ $RSmessages | % {
   #
   if (($_.nNumFragments -eq 1) -or (($_.nNumFragments -gt 1) -and ($_.nFragmentNumber -eq 1)))
   {
-    # skriv imgPart
     $fileName = "$baseFileName$fragmentNamePart$isCompressed"
     $bytesToWrite = $_.DatalengthPart
     Write-Output "Writing imgPart $bytesToWrite bytes to $fileName"
