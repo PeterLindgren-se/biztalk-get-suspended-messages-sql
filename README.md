@@ -1,6 +1,8 @@
 # biztalk-get-suspended-messages-sql
 Code examples on how to download, in bulk, suspended messages directly from the message box database.
+
 The accompanying article is on Microsoft TechNet Wiki: https://social.technet.microsoft.com/wiki/contents/articles/54330.biztalk-server-download-suspended-messages-in-bulk-from-sql-server.aspx
+
 The code was developed on a BizTalk Server 2013 (not the R2) but should work with newer versions as well.
 
 Usage Overview
