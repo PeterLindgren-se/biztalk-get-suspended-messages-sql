@@ -33,17 +33,19 @@ Usage Details
    
    `c:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe -out:biztalk-decompress-message.exe biztalk-decompress-message.cs`
 
-3. Edit the SQL and Powershell files:
+3. Choose whether you need all messages, all messages of a certain message type, or all messages pertaining to a specific service instance (orchestration or messaging).
+
+4. Edit the SQL and Powershell files:
 
    a) Add where-conditions in the SQL query file, for example if you only want to select a certain message type, NULL for messages with no message type; or a specific service instance ID.
    
    b) Set server/instance name and database name in the Powershell script.
 
-4. Create a subfolder 'data' for data files:
+5. Create a subfolder 'data' for data files:
 
    `New-Item -Path . -Name data -Type Directory -Force`
 
-5. Run the Powershell script:
+6. Run the Powershell script:
 
    `.\biztalk-get-suspended-messages.ps1 .\biztalk-get-suspended-messages.sql .\data`
    
@@ -51,7 +53,7 @@ Usage Details
    
    `.\biztalk-get-suspended-messages.ps1 .\biztalk-get-suspended-messages-for-service-instance.sql .\data -UsePartID`
 
-6. Decompress the files:
+7. Decompress the files:
 
    The syntax for the biztalk-decompress-message.exe program is as follows:
    
@@ -63,14 +65,14 @@ Usage Details
    
    `Get-ChildItem -Path .\data -Filter "*.compressed" | % { .\biztalk-decompress-message.exe $_.FullName }`
 
-7. Move the original compressed files to a subfolder, to get them out of the way for the concatenation:
+8. Move the original compressed files to a subfolder, to get them out of the way for the concatenation:
 ```
    New-Item -Path .\data\ -Name compressed -Type Directory -Force
    Move-Item .\data\*.compressed -Destination .\data\compressed\
 ```
-8. Concatenate the fragments (they are called \_fragment000 and upwards) to rebuild the files:
+9. Concatenate the fragments (they are called \_fragment000 and upwards) to rebuild the files:
 
    `.\concatenate-fragments.ps1 .\data\`
 
-9. Done!
+10. Done!
    The concatenated, complete files have the extension .out.
