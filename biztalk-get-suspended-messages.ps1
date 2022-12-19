@@ -1,12 +1,15 @@
-﻿param
+param
 (
   [parameter (Mandatory = $true)] [string]$QueryFileName
  ,[parameter (Mandatory = $true)] [string]$folderName
+ ,[parameter (Mandatory = $false)] [switch]$UsePartID
 )
 
 Push-Location
 # 0x0100000 = 1 Mbyte
-$RSmessages = Invoke-Sqlcmd -ServerInstance "servername\instancename,portnumber" -Database "BizTalkMsgBoxDb" -InputFile $QueryFileName -MaxBinaryLength 0x0100000
+$RSmessages = Invoke-Sqlcmd -ServerInstance "btscludbmsg-pr\bts-msg01,50004" -Database "BizTalkMsgBoxDb" -InputFile $QueryFileName -MaxBinaryLength 0x0100000
+$RSMessagesCount = $RSmessages.Length
+Write-Output "Message count: $RSMessagesCount"
 
 $RSmessages | % {
   if ($_.nvcMessageType -ne [System.DBNull]::Value)
@@ -17,7 +20,14 @@ $RSmessages | % {
   {
     $messageTypePart = "no_message_type"
   }
-  $baseFileName = ($_.nvcBodyPartName.ToString() + "_" + $messageTypePart + "_" + $_.uidMessageID.ToString())
+  if ($UsePartID)
+  {
+    $baseFileName = ($_.nvcBodyPartName.ToString() + "_" + $messageTypePart + "_" + $_.uidPartID.ToString())
+  }
+  else
+  {
+    $baseFileName = ($_.nvcBodyPartName.ToString() + "_" + $messageTypePart + "_" + $_.uidMessageID.ToString())
+  }
 
   #
   # BizTalk splits a large message part in a multi-part message in
@@ -59,10 +69,11 @@ $RSmessages | % {
   # second fragment?
   # Then write the base fragment (fragment 0) from imgPart
   # (The sql query performs a left join so that we always get the base fragment in [imgPart]
-  # for all rows for fragmented message parts)
+  # for all rows fÃ¶r fragmented message parts)
   #
   if (($_.nNumFragments -eq 1) -or (($_.nNumFragments -gt 1) -and ($_.nFragmentNumber -eq 1)))
   {
+    # skriv imgPart
     $fileName = "$baseFileName$fragmentNamePart$isCompressed"
     $bytesToWrite = $_.DatalengthPart
     Write-Output "Writing imgPart $bytesToWrite bytes to $fileName"
