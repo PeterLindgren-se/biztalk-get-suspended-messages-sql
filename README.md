@@ -16,7 +16,7 @@ Refer to the Usage Details section below before actually following these instruc
 6. Run the Powershell script to retrieve the data.
 7. Decompress the files using the compiled program.
 8. Move away the compressed files.
-9. Concatenate the fragments
+9. Concatenate the fragments.
 10. Done!
 
 Usage Details
