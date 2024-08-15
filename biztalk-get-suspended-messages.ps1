@@ -4,10 +4,13 @@ param
  ,[parameter (Mandatory = $true)] [string]$folderName
  ,[parameter (Mandatory = $false)] [switch]$UsePartID
 )
+# <summary>
+# https://github.com/PeterLindgren-se/biztalk-get-suspended-messages-sql
+# </summary>
 
 Push-Location
 # 0x0100000 = 1 Mbyte
-$RSmessages = Invoke-Sqlcmd -ServerInstance "btscludbmsg-pr\bts-msg01,50004" -Database "BizTalkMsgBoxDb" -InputFile $QueryFileName -MaxBinaryLength 0x0100000
+$RSmessages = Invoke-Sqlcmd -ServerInstance "my-server-name\my-instance-name,my-port-number" -Database "BizTalkMsgBoxDb" -InputFile $QueryFileName -MaxBinaryLength 0x0100000
 $RSMessagesCount = $RSmessages.Length
 Write-Output "Message count: $RSMessagesCount"
 
@@ -69,11 +72,11 @@ $RSmessages | % {
   # second fragment?
   # Then write the base fragment (fragment 0) from imgPart
   # (The sql query performs a left join so that we always get the base fragment in [imgPart]
-  # for all rows fÃ¶r fragmented message parts)
+  # for all rows for fragmented message parts)
   #
   if (($_.nNumFragments -eq 1) -or (($_.nNumFragments -gt 1) -and ($_.nFragmentNumber -eq 1)))
   {
-    # skriv imgPart
+    # Write imgPart
     $fileName = "$baseFileName$fragmentNamePart$isCompressed"
     $bytesToWrite = $_.DatalengthPart
     Write-Output "Writing imgPart $bytesToWrite bytes to $fileName"
@@ -91,5 +94,15 @@ $RSmessages | % {
     Write-Output "Writing imgFrag $bytesToWrite bytes to $fileName"
     [System.IO.File]::WriteAllBytes("$folderName\$fileName", $_.imgFrag[0..($bytesToWrite-1)])
   }
+  # Write imgPropBag
+  $fileName = "$baseFileName$fragmentNamePart.propBag"
+  $bytesToWrite = $_.DatalengthPropBag
+  Write-Output "Writing imgPropBag $bytesToWrite bytes to $fileName"
+  [System.IO.File]::WriteAllBytes("$folderName\$fileName", $_.imgPropBag[0..($bytesToWrite-1)])
+  # Write imgContext
+  $fileName = "$baseFileName$fragmentNamePart.context"
+  $bytesToWrite = $_.DatalengthContext
+  Write-Output "Writing imgContext $bytesToWrite bytes to $fileName"
+  [System.IO.File]::WriteAllBytes("$folderName\$fileName", $_.imgContext[0..($bytesToWrite-1)])
 }
 Pop-Location

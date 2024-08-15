@@ -2,6 +2,9 @@ using System;
 using System.IO;
 using System.Reflection;
 
+/// <summary>
+/// https://github.com/PeterLindgren-se/biztalk-get-suspended-messages-sql
+/// </summary>
 public class MyClass
 {
 	public static void DecompressFile(string inputFilename, string outputFilename, Type compressionStreamsType)
@@ -20,7 +23,6 @@ public class MyClass
 		compressedInputStream.Close();
 	}
 	
-	#region Helper methods
 	
 	public static int Main(string[] args)
 	{
@@ -76,22 +78,8 @@ public class MyClass
 	}
 
 
-	private static void WL(object text, params object[] args)
+	private static void WL(String text)
 	{
-		Console.WriteLine(text.ToString(), args);	
+		Console.WriteLine(text);
 	}
-
-	
-	private static void RL()
-	{
-		Console.ReadLine();	
-	}
-
-	
-	private static void Break() 
-	{
-		System.Diagnostics.Debugger.Break();
-	}
-
-	#endregion
 }
