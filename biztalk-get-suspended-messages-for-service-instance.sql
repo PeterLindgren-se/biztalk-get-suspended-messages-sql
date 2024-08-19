@@ -1,11 +1,16 @@
+/*
+ * <summary>
+ * https://github.com/PeterLindgren-se/biztalk-get-suspended-messages-sql
+ * </summary>
+*/
 SELECT 
-       s.[uidMessageID ]      as [uidMessageID]
+	   s.[uidMessageID ] as [uidMessageID]
 	   ,p.uidPartID
 	   ,s.dtTimeStamp
 	   ,s.nvcBodyPartName
 	   ,mp.nvcPartName
 	   ,s.nvcMessageType
-	   ,mp.nBodyPart          as [IsBodyPart]
+	   ,mp.nBodyPart as [IsBodyPart]
 	   ,p.nPartSize           as [UncompressedLengthPart]
 	   ,DATALENGTH(p.imgPart) as [DatalengthPart]
 	   ,p.nNumFragments
@@ -14,6 +19,10 @@ SELECT
 	   ,DATALENGTH(f.imgFrag) as [DatalengthFragment]
 	   ,p.imgPart
 	   ,f.imgFrag
+	   ,DATALENGTH(p.imgPropBag) as [DatalengthPropBag]
+	   ,p.imgPropBag
+	   ,DATALENGTH(s.imgContext) as [DatalengthContext]
+	   ,s.imgContext
 FROM [Clustered_LongRunning_Orchestration_64Q_Suspended] i WITH (NOLOCK)
 INNER JOIN  [Spool] s WITH(NOLOCK) on i.[uidMessageID] = s.[uidMessageID ]
 LEFT JOIN MessageParts mp WITH(NOLOCK) ON s.[uidMessageID ] = mp.[uidMessageID ]
